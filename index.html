@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ESP.EE · Painel Professor (r6.1)</title>
+  <link rel="stylesheet" href="style.r6.css" />
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">ESP.EE · Painel Professor <span class="muted" style="font-weight:600">(r6.1)</span></div>
+    <div class="top-actions">
+      <span id="profBanner" class="session-pill">Sessão: não iniciada</span>
+      <span id="syncIndicator" class="muted">—</span>
+      <button id="btnMsLogin" class="btn">Entrar</button>
+      <button id="btnMsLogout" class="btn hidden">Sair</button>
+    </div>
+  </div>
+  <main class="content stack gap">
+    <section id="secProfessor" class="section hidden table-compact">
+      <div class="sec-head">
+        <h2>As minhas aulas</h2>
+        <div class="sec-actions">
+          <label class="muted">Data <input id="profData" type="date" class="input" style="width: 180px" /></label>
+          <button id="btnProfHoje" class="btn">Hoje</button>
+          <button id="btnProfExportPDF" class="btn">Exportar meus registos (PDF)</button>
+          <button id="btnProfExportXLSX" class="btn">Exportar meus registos (XLSX)</button>
+          <button id="btnProfExportFiltros" class="btn">Exportar filtrado…</button>
+        </div>
+      </div>
+      <h3>Registos do dia</h3>
+      <div class="card" style="overflow:auto">
+        <table id="tblHoje" class="table">
+          <thead>
+            <tr>
+              <th>Hora</th>
+              <th>Disciplina</th>
+              <th>Aluno/Serviço</th>
+              <th>Nº Lição</th>
+              <th>Sumário</th>
+              <th>Presença</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px"><button id="btnSalvarSelecionados" class="btn">Guardar selecionados</button></div>
+      <h3>Registos em falta</h3>
+      <div class="muted">Dias anteriores sem registo</div>
+      <div class="card" style="overflow:auto">
+        <table id="tblPend" class="table">
+          <thead><tr><th>Data</th><th>Disciplina</th><th>Aluno/Serviço</th><th>Ação</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+    <section id="secProfHorario" class="section hidden">
+      <div class="sec-head"><h2>O meu horário (grelha)</h2></div>
+      <div id="gridProfHorario" class="card"></div>
+      <div id="legendHorario" class="muted" style="margin-top:8px">Legenda: <span class="pill pill-al">Aluno/Serviço</span> <span class="pill pill-func">Serviço</span> <span class="pill pill-mix">Misto</span></div>
+    </section>
+    <section id="admin" class="section hidden admin-compact">
+      <div class="sec-head">
+        <h2>Administração</h2>
+        <div class="sec-actions">
+          <label class="muted">Fonte: <input id="fileExcel" type="file" accept=".xls,.xlsx,.xlsm" class="input" style="width:260px" onfocus="this.blur()"></label>
+          <span id="wbHint" class="muted" style="margin-left:6px">Carrega um Excel (.xlsx/.xlsm)</span>
+          <button id="btnWbInfo" class="btn">Info</button>
+          <button id="btnImpProf" class="btn btn-disabled">Importar Professores</button>
+          <button id="btnImpAlu" class="btn btn-disabled">Importar Alunos</button>
+          <button id="btnImpDisc" class="btn btn-disabled">Importar Disciplinas</button>
+          <button id="btnImpAulas" class="btn btn-disabled">Importar Aulas</button>
+          <button id="btnGenProf" class="btn btn-disabled">Gerar Professores</button>
+          <button id="btnGenAlu" class="btn btn-disabled">Gerar Alunos</button>
+          <button id="btnGenDisc" class="btn btn-disabled">Gerar Disciplinas</button>
+          <button id="btnGenAulas" class="btn btn-disabled">Gerar Aulas</button>
+        </div>
+        <div class="sec-actions">
+          <label class="muted">Entidade:
+            <select id="adminEntity" class="input">
+              <option value="professores">Professores</option>
+              <option value="alunos">Alunos</option>
+              <option value="disciplinas">Disciplinas</option>
+              <option value="oficinas">Aulas</option>
+            </select>
+          </label>
+          <button id="btnAdminNovo" class="btn">Novo</button>
+          <button id="btnAdminEditar" class="btn" disabled>Editar</button>
+          <button id="btnAdminApagar" class="btn" disabled>Apagar</button>
+          <button id="btnAdminExportLista" class="btn">Exportar lista (XLSX)</button>
+        </div>
+      </div>
+      <div id="adminGrid"></div>
+    </section>
+    <section id="secExportBackup" class="section hidden">
+      <div class="sec-head">
+        <h2>Exportar & Backup</h2>
+        <div class="sec-actions">
+          <button id="btnExportRegXlsx" class="btn">Exportar registos (XLSX)</button>
+          <button id="btnExportRegPdf" class="btn">Exportar registos (PDF)</button>
+          <button id="btnExportFiltrado" class="btn">Exportar filtrado…</button>
+          <button id="btnBackupNow" class="btn">Backup agora</button>
+        </div>
+      </div>
+      <div class="stack gap">
+        <div class="card">
+          <h3>Diagnóstico</h3>
+          <div id="diagInfo" class="muted"></div>
+          <div id="adminGateInfo" class="muted" style="margin-top:6px"></div>
+          <div style="margin-top:10px" class="sec-actions">
+            <button id="btnDiagCreateFolders" class="btn">Criar pastas</button>
+            <button id="btnDiagInitFiles" class="btn">Inicializar ficheiros (vazios)</button>
+            <button id="btnDiagClearCache" class="btn">Limpar cache local</button>
+            <button id="btnDiagListFolder" class="btn">Listar pasta</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+  <script src="https://alcdn.msauth.net/browser/2.38.2/js/msal-browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.19.3/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+  <script src="app.r6.js"></script>
+</body>
+</html>
